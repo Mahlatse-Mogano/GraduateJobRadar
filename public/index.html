@@ -1,0 +1,372 @@
+<title>Learnership Radar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Open learnerships, bursaries, internships and graduate programmes in South Africa, checked every morning. Every link goes to the official application page.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,500..900&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: one phone-first column. Masthead with a highlighted promise, a filter panel (type, industry, province),
+   then listings grouped by how soon they close. Each listing has a tear-off "days left" stub on the left. */
+:root{
+  --paper:#f3f6f2; --card:#ffffff; --ink:#10241c; --muted:#5b6b63; --line:#d9e1db; --soft:#e8eee9;
+  --green:#1e6a48; --green-ink:#ffffff; --mark:#ffe14d; --mark-ink:#2b2300;
+  --urgent:#b4380f; --urgent-bg:#fde9e1;
+  --display:"Anybody", "Arial Narrow", "Segoe UI", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0d1713; --card:#142219; --ink:#e6efe9; --muted:#93a59b; --line:#23362c; --soft:#1b2c22;
+  --green:#5cc48f; --green-ink:#08160f; --mark:#e9c930; --mark-ink:#1c1700;
+  --urgent:#ff8a65; --urgent-bg:#3a1e14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0d1713; --card:#142219; --ink:#e6efe9; --muted:#93a59b; --line:#23362c; --soft:#1b2c22;
+  --green:#5cc48f; --green-ink:#08160f; --mark:#e9c930; --mark-ink:#1c1700;
+  --urgent:#ff8a65; --urgent-bg:#3a1e14; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--green);outline-offset:2px;border-radius:4px}
+.wrap{max-width:780px;margin:0 auto;padding-block:24px 56px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:22px}
+
+/* Masthead */
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--display);font-stretch:120%;font-weight:800;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+.brand svg{flex:none}
+h1{font-family:var(--display);font-stretch:62%;font-weight:900;font-size:clamp(46px,13vw,88px);line-height:.9;letter-spacing:-.01em;margin:10px 0 0;text-transform:uppercase;text-wrap:balance}
+.hl{position:relative;white-space:nowrap;padding:0 .06em}
+.hl::before{content:"";position:absolute;inset:.18em -.04em .06em;background:var(--mark);transform:skewX(-8deg) rotate(-1deg);z-index:-1;border-radius:2px}
+h1 .hl{color:var(--mark-ink)}
+h1{position:relative;z-index:0}
+.lede{margin:14px 0 0;max-width:58ch;color:var(--muted);font-size:17px}
+.summary{margin:14px 0 0;display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--muted)}
+.summary b{color:var(--ink);font-variant-numeric:tabular-nums}
+.summary .now b{color:var(--urgent)}
+
+.safety{display:flex;gap:10px;align-items:flex-start;background:var(--soft);border-radius:10px;padding:12px 14px;font-size:15px}
+.safety svg{flex:none;margin-top:2px;color:var(--urgent)}
+.safety strong{font-weight:700}
+
+/* Filters */
+.filters{display:flex;flex-direction:column;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.search{position:relative}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search input{width:100%;font:inherit;padding:12px 14px 12px 40px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.group{display:flex;flex-direction:column;gap:8px;min-width:0}
+.glabel{font-family:var(--display);font-stretch:120%;font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;margin-inline:-16px;padding-inline:16px;scrollbar-width:thin;-webkit-mask-image:linear-gradient(90deg,#000 92%,transparent)}
+.chip{font:inherit;font-size:14px;line-height:1.2;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;white-space:nowrap;display:inline-flex;gap:6px;align-items:center}
+.chip .n{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.chip:hover{border-color:var(--green)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip[aria-pressed="true"] .n{color:inherit;opacity:.75}
+.row{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+select{font:inherit;font-size:14px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.clear{font:inherit;font-size:14px;background:none;border:0;color:var(--green);text-decoration:underline;cursor:pointer;padding:4px 0;margin-left:auto}
+
+/* Results */
+.count{margin:0;font-size:14px;color:var(--muted)}
+.band{display:flex;flex-direction:column;gap:10px}
+.band h2{display:flex;align-items:baseline;gap:10px;margin:6px 0 0;font-family:var(--display);font-stretch:110%;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.band h2 .n{font-family:var(--body);font-weight:400;letter-spacing:0;text-transform:none;font-size:14px;color:var(--muted)}
+.band h2::after{content:"";flex:1;border-top:1px dashed var(--line);transform:translateY(-4px)}
+ol.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+
+.item{display:grid;grid-template-columns:76px 1fr;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.stub{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:12px 4px;border-right:2px dashed var(--line);text-align:center}
+.stub::before,.stub::after{content:"";position:absolute;right:-8px;width:14px;height:14px;border-radius:50%;background:var(--paper);border:1px solid var(--line)}
+.stub::before{top:-8px}.stub::after{bottom:-8px}
+.days{font-family:var(--display);font-stretch:55%;font-weight:900;font-size:40px;line-height:.9;font-variant-numeric:tabular-nums;position:relative;z-index:0;padding:0 4px}
+.days.soon::before{content:"";position:absolute;inset:.12em -.05em .02em;background:var(--mark);transform:skewX(-8deg) rotate(-2deg);z-index:-1;border-radius:2px}
+.days.soon{color:var(--mark-ink)}
+.days.small{font-size:22px;font-stretch:70%}
+.unit{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.stub.urgent .unit{color:var(--urgent)}
+
+.body{display:flex;flex-direction:column;gap:6px;padding:14px 16px;min-width:0}
+.meta{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:12px;align-items:center}
+.tag{font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--green)}
+.ind{color:var(--muted)}
+.ind::before{content:"·";margin-right:8px}
+.new{background:var(--mark);color:var(--mark-ink);font-weight:700;padding:1px 6px;border-radius:4px}
+.title{margin:0;font-family:var(--body);font-weight:700;font-size:18px;line-height:1.3;overflow-wrap:anywhere}
+.title a{text-decoration:none}
+.title a:hover{text-decoration:underline}
+.who{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.foot{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;margin-top:4px}
+.closes{font-size:14px;font-variant-numeric:tabular-nums}
+.closes.urgent{color:var(--urgent);font-weight:700}
+.closes.none{color:var(--muted)}
+.apply{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:var(--green-ink);text-decoration:none;font-weight:700;font-size:14px;padding:9px 14px;border-radius:999px;white-space:nowrap}
+.apply:hover{filter:brightness(1.08)}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:12px;padding:28px 18px;text-align:center;color:var(--muted)}
+.empty button{margin-top:10px}
+
+footer{font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:18px}
+footer p{margin:0;max-width:65ch}
+footer strong{color:var(--ink)}
+
+@media (max-width:420px){
+  .item{grid-template-columns:64px 1fr}
+  .days{font-size:34px}
+  .body{padding:12px 14px}
+  .title{font-size:17px}
+  .apply{width:100%;justify-content:center}
+}
+@media (prefers-reduced-motion:no-preference){
+  .chip{transition:background .15s,color .15s,border-color .15s}
+  h1 .hl::before{animation:swipe .7s .15s cubic-bezier(.2,.7,.2,1) both;transform-origin:left center}
+  @keyframes swipe{from{transform:skewX(-8deg) rotate(-1deg) scaleX(0)}to{transform:skewX(-8deg) rotate(-1deg) scaleX(1)}}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/><path d="M12 12 19 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Learnership Radar
+    </div>
+    <h1>Apply before it <span class="hl">closes</span></h1>
+    <p class="lede">Learnerships, bursaries, internships and graduate programmes in South Africa that are open right now. Checked every morning. Every link goes to the official application page.</p>
+    <p class="summary" id="summary"><span>Loading listings…</span></p>
+  </header>
+
+  <div class="safety" role="note">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 2 20h20L12 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4M12 17v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <span><strong>Never pay to apply.</strong> Real learnerships and bursaries don’t charge application, registration or admin fees. Anyone asking for money or your banking PIN is running a scam.</span>
+  </div>
+
+  <section class="filters" aria-label="Filter listings">
+    <label class="search" for="q">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="Search, e.g. Sasol, nursing, ICT" autocomplete="off" aria-label="Search listings">
+    </label>
+    <div class="group">
+      <span class="glabel" id="lbl-type">Type</span>
+      <div class="chips" id="types" role="group" aria-labelledby="lbl-type"></div>
+    </div>
+    <div class="group">
+      <span class="glabel" id="lbl-ind">Industry</span>
+      <div class="chips" id="industries" role="group" aria-labelledby="lbl-ind"></div>
+    </div>
+    <div class="row">
+      <label class="glabel" for="prov">Province</label>
+      <select id="prov">
+        <option value="">All provinces</option>
+        <option>Eastern Cape</option><option>Free State</option><option>Gauteng</option>
+        <option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option>
+        <option>North West</option><option>Northern Cape</option><option>Western Cape</option>
+      </select>
+      <button type="button" class="clear" id="clear" hidden>Clear filters</button>
+    </div>
+  </section>
+
+  <p class="count" id="count" aria-live="polite"></p>
+  <div id="results"></div>
+
+  <footer>
+    <p><strong>How listings are checked.</strong> Every morning the radar collects new adverts from SETA, government and youth-opportunity websites, then opens each official link. Listings that have closed, been removed, or are only general information pages are left off.</p>
+    <p><strong>No closing date shown?</strong> The advert didn’t give one. Open the link and check the closing date and requirements before you apply.</p>
+    <p>Province filters also show listings that don’t name a province, since many are national. Industry tags are added automatically, so check the advert itself.</p>
+    <p>Listings may be out of date or incomplete; always confirm details with the provider. Learnership Radar isn’t linked to any SETA, employer or government department. This site collects no personal information and uses no tracking.</p>
+  </footer>
+</div>
+
+<script>
+const SUPABASE_URL = "https://lczruefjljcgxrgdhtdp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_5dkMWxG7VTfUyduFXPMXTA_EDmcgpwR"; // public read-only key; database rules allow open, approved listings only
+
+// Built-in copy of the list, shown when live data can't be reached
+const SNAPSHOT_DATE = "2026-10-25";
+const SNAPSHOT = [
+["Astron Energy: Bursaries 2027","Astron Energy","bursary","Energy",[],"2026-10-26","https://aebursary.auraams.app/Home/Index?applicationTypeId=332"],
+["AFGRI: Learnerships 2026 / 2027","AFGRI","learnership","Agriculture",[],"2026-10-28","https://afgri.mcidirecthire.com/External/Application?Ref=TEkBhDYErs0qhHgueWeCgt_yRI-cnPLR1MRk1RR6CpovtNnuiVlYCxkOUAzXEEVwx_D6XKczw4UO6wc3odkYiaZxDHfU-No8uMmZea6okqGk-2sOaLrLWYk4CgoMVSLcu1_CwzPcVE8bAjaW8-TCrg"],
+["National Lotteries Commission (NLC): Internships 2026 / 2027","National Lotteries Commission (NLC)","internship","Government & public service",[],"2026-10-28","https://forms.cloud.microsoft/pages/responsepage.aspx?id=vqny0M7m-k-bMVZ3yzBcXgF-EgQvRNlAn9TGAm3QDiRUQkpPSEZKQzJVMkowVFJXWjBMV1g2TEdZNi4u&route=shorturl"],
+["Kia South Africa: Internships (Commerce, Accounting, Finance, Financial Management)","Kia South Africa","internship","Finance & business",[],"2026-10-30","https://motus.simplify.hr/Vacancy/Apply/wu3xuc"],
+["South African Wind Energy Association (SAWEA): Internships 2027","South African Wind Energy Association (SAWEA)","internship","Energy",[],"2026-10-30","https://sawea.org.za/form/wiip-intern-2027"],
+["JDK Benefit Trust Bursaries 2027","JDK Benefit Trust","bursary","Other",[],"2026-10-31","https://jdkbenefittrust.co.za/application-form/"],
+["Nedbank: TalentForge Tech Graduate Programme 2027","Nedbank","graduate_programme","IT & tech",[],"2026-11-03","https://jobs.nedbank.co.za/job/Johannesburg-TalentForge-Tech-Graduate-Programme/1436136833/"],
+["ArcelorMittal South Africa Engineering Bursaries 2027","ArcelorMittal South Africa","bursary","Engineering & trades",["Gauteng"],"2026-11-04","https://arcelormittalsa.ci.hr/applicant/index.php?controller=Listings&listingid=67b8210a-5f8d-485d-947f-66e1688e77c3&method=view"],
+["Dis-Chem Dispensary Support Learnerships 2026 / 2027","Dis-Chem","learnership","Health & pharmacy",["Gauteng","Western Cape","Free State","Limpopo"],"2026-11-04","https://retail.simplify.hr/vacancy/tdh8jq"],
+["Mastercard Associate Consultant Graduate Programme 2027","Mastercard","graduate_programme","Finance & business",["Gauteng"],"2026-11-05","https://careers.mastercard.com/us/en/job/MASRUSR287587EXTERNALENUS/Associate-Consultant-Launch-Graduate-Program-2027-Johannesburg-South-Africa"],
+["Sasol Administration Learnerships 2026 / 2027","Sasol","learnership","Admin, retail & service",[],"2026-11-06","https://jobs.sasol.com/job/Sandton-Learner-Administrator/1448342533/"],
+["SAPS Police Trainees 2027: Grade 12 Applicants Can Apply","SAPS","internship","Government & public service",[],"2026-11-13","https://erecruitment.saps.gov.za/View-Full-Vacancy/?id=03cf6c23-76cc-f111-a05c-e4fb1ef9a8d2"],
+["Rohlig-Grindrod YES Internships 2027: Apply with Matric","Rohlig-Grindrod","internship","Logistics & transport",[],"2026-11-15","https://rohligcoza.simplify.hr/Vacancy/Apply/c6vssr"],
+["Cubix: Graduate Internships 2026 / 2027","Cubix","graduate_programme","Other",[],"2026-11-30","https://cubix.simplify.hr/Vacancy/208876"],
+["PSG Graduate Internships 2027","PSG","graduate_programme","Finance & business",[],"2026-11-30","https://myfocus.psg.co.za/CareerFocus/Vacancy/HRF_VACANCY_REPORT.aspx?qs=mlpeS3%2FjZLwAyYPCqyBIJYqcbtukORPruqiK2vk3Ca%2FhShJnFDTWsR2VR0a1%2FP9hNkNxn4X6h93oXtt7ka22gx%2Bj4Lhe%2FIa3hy7iqLpFEhiMh1XeMyjPQQkERRlnWba%2BbYuGMtHkK4%2BNZGsXTWz3gahruLS8otye0Crjq3lXqEo%3D"],
+["SIOC Community Development Trust (SIOC-CDT): Bursaries 2027","SIOC Community Development Trust (SIOC-CDT)","bursary","Mining",[],"2026-11-30","https://duxpd.co.za/sioc-cdt-online-bursary-application-form/"],
+["Public Service Vacancy Circular 38 of 2026: government posts, including internships","DPSA (national & provincial departments)","government","Government & public service",[],null,"https://www.dpsa.gov.za/newsroom/psvc/circular-38-of-2026/"],
+["Public Service Vacancy Circular 37 of 2026: government posts, including internships","DPSA (national & provincial departments)","government","Government & public service",[],null,"https://www.dpsa.gov.za/newsroom/psvc/circular-37-of-2026/"]
+].map(([title,provider,type,field,provinces,closing_date,url])=>({title,provider,type,field,provinces,closing_date,url,first_seen_at:SNAPSHOT_DATE}));
+
+const TYPES = [["","All"],["learnership","Learnerships"],["bursary","Bursaries"],["internship","Internships"],["graduate_programme","Graduate programmes"],["apprenticeship","Apprenticeships"],["government","Government jobs"],["other","Other"]];
+const TYPE_LABEL = {learnership:"Learnership",bursary:"Bursary",internship:"Internship",graduate_programme:"Graduate programme",apprenticeship:"Apprenticeship",government:"Government jobs",other:"Opportunity"};
+const INDUSTRIES = ["Engineering & trades","IT & tech","Finance & business","Health & pharmacy","Mining","Energy","Agriculture","Logistics & transport","Admin, retail & service","Government & public service","Education","Other"];
+
+const state = {q:"", type:"", industry:"", prov:"", rows:[], live:false};
+const $ = id => document.getElementById(id);
+try { const s = JSON.parse(localStorage.getItem("lr-filters2")||"{}"); state.type=s.type||""; state.industry=s.industry||""; state.prov=s.prov||""; } catch {}
+function save(){ try { localStorage.setItem("lr-filters2", JSON.stringify({type:state.type,industry:state.industry,prov:state.prov})); } catch {} }
+
+// Dates in South African time
+const fmtLong = new Intl.DateTimeFormat("en-ZA",{day:"numeric",month:"long",timeZone:"Africa/Johannesburg"});
+const todayStr = new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Johannesburg"}).format(new Date());
+const dayNum = s => Date.UTC(+s.slice(0,4), +s.slice(5,7)-1, +s.slice(8,10))/86400000;
+const daysLeft = d => dayNum(d) - dayNum(todayStr);
+
+function band(r){
+  if (!r.closing_date) return 3;
+  const d = daysLeft(r.closing_date);
+  return d <= 7 ? 0 : d <= 31 ? 1 : 2;
+}
+const BANDS = ["Closing this week","Closing this month","Closing later","Open — check the advert for dates"];
+
+function matches(r, skip){
+  if (skip!=="type" && state.type && r.type!==state.type) return false;
+  if (skip!=="industry" && state.industry && (r.field||"Other")!==state.industry) return false;
+  if (state.prov && r.provinces?.length && !r.provinces.includes(state.prov)) return false;
+  if (state.q && !(r.title+" "+(r.provider||"")+" "+(r.field||"")).toLowerCase().includes(state.q)) return false;
+  return true;
+}
+
+function chip(label, value, current, n, onPick){
+  const b = document.createElement("button");
+  b.type="button"; b.className="chip"; b.setAttribute("aria-pressed", String(value===current));
+  b.append(label);
+  if (n!==null){ const s=document.createElement("span"); s.className="n"; s.textContent=n; b.append(s); }
+  b.addEventListener("click", ()=>onPick(value===current && value ? "" : value));
+  return b;
+}
+
+function renderFilters(){
+  const forType = state.rows.filter(r=>matches(r,"type"));
+  const t = $("types"); t.replaceChildren();
+  for (const [k,label] of TYPES){
+    const n = k ? forType.filter(r=>r.type===k).length : forType.length;
+    if (k && !n && state.type!==k) continue;
+    t.append(chip(label, k, state.type, n, v=>{state.type=v; save(); render();}));
+  }
+  const forInd = state.rows.filter(r=>matches(r,"industry"));
+  const i = $("industries"); i.replaceChildren();
+  i.append(chip("All industries", "", state.industry, forInd.length, v=>{state.industry=v; save(); render();}));
+  for (const name of INDUSTRIES){
+    const n = forInd.filter(r=>(r.field||"Other")===name).length;
+    if (!n && state.industry!==name) continue;
+    i.append(chip(name, name, state.industry, n, v=>{state.industry=v; save(); render();}));
+  }
+  $("clear").hidden = !(state.type || state.industry || state.prov || state.q);
+}
+
+function item(r){
+  const li=document.createElement("li"); li.className="item";
+  const stub=document.createElement("div"); stub.className="stub";
+  const days=document.createElement("span"); days.className="days";
+  const unit=document.createElement("span"); unit.className="unit";
+  if (r.closing_date){
+    const d=daysLeft(r.closing_date);
+    if (d<=0){ days.textContent="Today"; days.classList.add("small","soon"); unit.textContent="last day"; stub.classList.add("urgent"); }
+    else { days.textContent=String(d); unit.textContent = d===1 ? "day left" : "days left"; if (d<=7){ days.classList.add("soon"); stub.classList.add("urgent"); } }
+  } else { days.textContent="Open"; days.classList.add("small"); unit.textContent = r.type==="government" ? "see posts" : "no date"; }
+  stub.setAttribute("aria-hidden","true");
+  stub.append(days,unit);
+
+  const body=document.createElement("div"); body.className="body";
+  const meta=document.createElement("div"); meta.className="meta";
+  const tag=document.createElement("span"); tag.className="tag"; tag.textContent=TYPE_LABEL[r.type]||"Opportunity";
+  const ind=document.createElement("span"); ind.className="ind"; ind.textContent=r.field||"Other";
+  meta.append(tag,ind);
+  if (state.live && r.first_seen_at && dayNum(todayStr) - dayNum(r.first_seen_at.slice(0,10)) <= 2){
+    const n=document.createElement("span"); n.className="new"; n.textContent="New"; meta.append(n);
+  }
+  const h=document.createElement("h3"); h.className="title";
+  const a=document.createElement("a"); a.href=r.url; a.target="_blank"; a.rel="noopener"; a.textContent=r.title; h.append(a);
+  const who=document.createElement("div"); who.className="who";
+  who.textContent=(r.provider||"") + " · " + (r.provinces?.length ? r.provinces.join(", ") : "National / province not stated");
+  const foot=document.createElement("div"); foot.className="foot";
+  const c=document.createElement("span"); c.className="closes";
+  if (r.closing_date){
+    const d=daysLeft(r.closing_date);
+    c.textContent = "Closes " + fmtLong.format(new Date(r.closing_date+"T12:00:00Z")) + (d<=0 ? " (today)" : "");
+    if (d<=7) c.classList.add("urgent");
+  } else if (r.type==="government"){ c.classList.add("none"); c.textContent="Each post has its own closing date"; }
+  else { c.classList.add("none"); c.textContent="No closing date given – check the advert"; }
+  const ap=document.createElement("a"); ap.className="apply"; ap.href=r.url; ap.target="_blank"; ap.rel="noopener";
+  ap.textContent = r.type==="government" ? "Open the circular" : "Apply on official site";
+  ap.setAttribute("aria-label", (r.type==="government" ? "Open the circular: " : "Apply on official site: ") + r.title);
+  ap.insertAdjacentHTML("beforeend",'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+  foot.append(c,ap);
+  body.append(meta,h,who,foot);
+  li.append(stub,body);
+  return li;
+}
+
+function render(){
+  renderFilters();
+  const rows = state.rows.filter(r=>matches(r));
+  $("count").textContent = (rows.length===1 ? "1 listing" : rows.length+" listings") + (rows.length!==state.rows.length ? " match your filters" : "");
+  const out=$("results"); out.replaceChildren();
+  if (!rows.length){
+    const e=document.createElement("div"); e.className="empty";
+    if (state.rows.length){
+      e.append("No listings match these filters.");
+      const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent="Clear filters"; b.addEventListener("click", clearAll);
+      e.append(document.createElement("br"), b);
+    } else e.textContent="No open calls right now. New listings are added every morning, so check back tomorrow.";
+    out.append(e); return;
+  }
+  const groups=[[],[],[],[]];
+  for (const r of rows) groups[band(r)].push(r);
+  groups.forEach((g,idx)=>{
+    if (!g.length) return;
+    const sec=document.createElement("section"); sec.className="band";
+    const h=document.createElement("h2"); h.textContent=BANDS[idx];
+    const n=document.createElement("span"); n.className="n"; n.textContent=String(g.length); h.append(n);
+    const ol=document.createElement("ol"); ol.className="list";
+    g.forEach(r=>ol.append(item(r)));
+    sec.append(h,ol); out.append(sec);
+  });
+}
+
+function renderSummary(){
+  const s=$("summary"); s.replaceChildren();
+  const week = state.rows.filter(r=>band(r)===0).length;
+  const add=(html,cls)=>{ const el=document.createElement("span"); if(cls) el.className=cls; el.innerHTML=html; s.append(el); };
+  add(`<b>${state.rows.length}</b> open now`);
+  if (week) add(`<b>${week}</b> closing this week`,"now");
+  add(state.live ? "Checked this morning at 05:15" : "Saved list from " + fmtLong.format(new Date(SNAPSHOT_DATE+"T12:00:00Z")));
+}
+
+function sortRows(rows){
+  return rows.filter(r=>!r.closing_date || r.closing_date>=todayStr).sort((a,b)=>{
+    if (a.closing_date && b.closing_date) return a.closing_date.localeCompare(b.closing_date) || a.title.localeCompare(b.title);
+    if (a.closing_date) return -1; if (b.closing_date) return 1;
+    return b.title.localeCompare(a.title);
+  });
+}
+
+function clearAll(){ state.type=""; state.industry=""; state.prov=""; state.q=""; $("q").value=""; $("prov").value=""; save(); render(); }
+
+$("prov").value=state.prov;
+$("q").addEventListener("input", e=>{ state.q=e.target.value.trim().toLowerCase(); render(); });
+$("prov").addEventListener("change", e=>{ state.prov=e.target.value; save(); render(); });
+$("clear").addEventListener("click", clearAll);
+
+state.rows = sortRows(SNAPSHOT.slice());
+renderSummary(); render();
+
+(async () => {
+  try {
+    const ctrl = new AbortController(); setTimeout(()=>ctrl.abort(), 8000);
+    const res = await fetch(SUPABASE_URL + "/rest/v1/opportunities?select=title,provider,type,field,provinces,closing_date,url,first_seen_at&limit=500",
+      {headers:{apikey:SUPABASE_KEY, Authorization:"Bearer "+SUPABASE_KEY}, signal:ctrl.signal});
+    if (!res.ok) throw new Error("HTTP "+res.status);
+    const rows = await res.json();
+    if (!Array.isArray(rows)) throw new Error("bad data");
+    state.live = true;
+    state.rows = sortRows(rows);
+    renderSummary(); render();
+  } catch { /* keep the built-in list */ }
+})();
+</script>
