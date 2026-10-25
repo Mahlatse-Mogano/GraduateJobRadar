@@ -1,7 +1,11 @@
-# Netlify builds nothing: it publishes the public/ folder as-is on every push to main.
+# On every push (and every morning via a build hook) Netlify fetches the open listings
+# from Supabase once and publishes them with the page as public/listings.json.
 [build]
   publish = "public"
-  command = ""
+  command = "node scripts/build-listings.mjs"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[headers]]
   for = "/*"
@@ -16,3 +20,10 @@
   for = "/index.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
+# Listings file: browsers re-check it cheaply (ETag), Netlify's cache serves it
+[[headers]]
+  for = "/listings.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Access-Control-Allow-Origin = "*"
