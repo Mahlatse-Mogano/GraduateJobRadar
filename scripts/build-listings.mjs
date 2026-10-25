@@ -4,7 +4,9 @@
 import { writeFile } from "node:fs/promises";
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://lczruefjljcgxrgdhtdp.supabase.co";
-const SUPABASE_KEY = process.env.SUPABASE_KEY || "sb_publishable_5dkMWxG7VTfUyduFXPMXTA_EDmcgpwR";
+// The key lives only in Netlify's environment variables (Site configuration → Environment variables).
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+if (!SUPABASE_KEY) throw new Error("SUPABASE_KEY is not set in Netlify environment variables");
 const FIELDS = "title,provider,type,field,provinces,closing_date,url,first_seen_at";
 
 const res = await fetch(`${SUPABASE_URL}/rest/v1/opportunities?select=${FIELDS}&order=closing_date.asc.nullslast&limit=1000`, {

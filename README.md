@@ -18,4 +18,4 @@ Every listing links to the official application page.
 - **Listings:** no deploy needed. They update in the database every morning and the page reads them live.
 - **Functions:** deployed to Supabase separately (`supabase functions deploy sweep` / `check-links`).
 
-The key in `index.html` is Supabase's public read-only key; database rules limit it to approved, open listings.
+Visitors never call Supabase: Netlify fetches listings at build time using `SUPABASE_KEY`, set only in Netlify environment variables. Database rules limit that key to approved, open listings.
